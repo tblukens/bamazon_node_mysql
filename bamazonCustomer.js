@@ -103,7 +103,7 @@ function inventoryCheck(id, num) {
         let purchaseCost = parseFloat(num) * parseFloat(result[0].price);
         let itemName = result[0].product_name;
         if (stockMinus >= 0) {
-            const sql = `UPDATE products SET stock_quantity = ${stockMinus} WHERE item_id = ?`
+            const sql = `UPDATE products SET stock_quantity = ${stockMinus}, product_sales = ${purchaseCost} WHERE item_id = ?`
             con.query(sql, [id], (err, result) => {
                 mainText(`You purchased ${num} of ${itemName}. Your total cost was $${purchaseCost.toFixed(2)}.`)
                 newTransactionPrompt();
