@@ -62,7 +62,7 @@ function getProducts() {
             productArray.push(element.product_name)
         });
     })
-    console.log(productArray)
+    // console.log(productArray)
 }
 
 mainText(`Welcome Manager!`)
