@@ -50,6 +50,7 @@ const errorText = (text) => {
 
 const productArray = [];
 
+// initial connection to database with welcome message then sends to start up function
 con.connect(function (err) {
     if (err) throw err;
     welcomeSup();
@@ -62,6 +63,7 @@ welcomeSup = () => {
     separator(colors.america, 39)
 }
 
+// initial function asking user what they want to do
 function startUp() {
     inquirer.prompt([{
         message: "What would you like to do?",
@@ -84,6 +86,8 @@ function startUp() {
     })
 }
 
+// view sales uses a left join to get info from both departments and products tables
+// then combines them to give valuable information for sales, profit, and overhead costs per department
 function viewSales() {
     const sql = `SELECT departments.department_id, departments.department_name, departments.over_head_costs,  
 IFNULL(SUM(products.product_sales),0) AS product_sales,
@@ -107,6 +111,7 @@ GROUP BY departments.department_name ORDER BY departments.department_id ASC`;
     })
 }
 
+// simple function to create a a new department then add to database
 function createDept() {
     inquirer.prompt([{
         message: "What is the name of the new department?",
@@ -123,6 +128,7 @@ function createDept() {
             return false;
         }
     }]).then(ans => {
+        // heres where the answers are put into the query then inserted into the database
         const sql = `INSERT INTO departments (department_name, over_head_costs) VALUES ("${ans.dept}",${ans.costs})`
         con.query(sql, (err, res) => {
             if (err) throw err;
@@ -133,7 +139,7 @@ function createDept() {
     })
 }
 
-
+// simple function using inquirer to ask if user would like to end the session
 function endSession() {
     inquirer.prompt([{
         message: "Would you like to end the session?",

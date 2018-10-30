@@ -55,6 +55,7 @@ con.connect(function (err) {
     startUp();
 });
 
+// function for getting products and pushing to the array
 function getProducts() {
     con.query("SELECT * FROM products", (err, res, fields) => {
         if (err) throw err;
@@ -67,6 +68,7 @@ function getProducts() {
 
 mainText(`Welcome Manager!`)
 
+// first function when program loads
 function startUp() {
     separator(chalk.cyan, 60)
     inquirer.prompt([{
@@ -80,6 +82,7 @@ function startUp() {
             "Quit..."]
     }]).then(manager => {
         separator(chalk.yellow, 60)
+        // switch which calls a function depending on which selection is made from inquirer
         switch (manager.selection) {
             case 'View Products For Sale':
                 listProducts();
@@ -101,6 +104,7 @@ function startUp() {
     })
 }
 
+// list function which pushes products to table then logs the table
 function listProducts() {
 
     con.query("SELECT * FROM products", (err, result, fields) => {
@@ -118,6 +122,7 @@ function listProducts() {
     })
 }
 
+// function showing only inventory which has a stock quantity less than number specified in callback function
 function lowInventory(num) {
     let sql = `SELECT * FROM products GROUP BY item_id HAVING stock_quantity < ` + num;
     con.query(sql, (err, results, fields) => {
@@ -134,6 +139,7 @@ function lowInventory(num) {
     })
 }
 
+// add to inventory. inquirer asks to type in item name and then select quantity to stock
 function addInventory() {
     con.query("SELECT * FROM products", (err, res) => {
         inquirer.prompt([{
@@ -157,15 +163,14 @@ function addInventory() {
                 return false;
             }
         }]).then(answer => {
-            // let ansSplice = answer.item.split("")
-            // ansSplice.splice(0,3)
-            // let newAnswer = ansSplice.join("");
             let chosenItem;
+            // this forEach runs through response then matches choice with answer
             res.forEach(element => {
-                if (element.product_name === answer.item.split(": ").pop()) {
+                if (element.product_name === answer.item.split(": ").pop()) { // <- pops off number and : from answer
                     chosenItem = element;
                 }
             });
+            // parsing integers to get current stock, plus the amount to be added summed
             let currentStock = parseInt(chosenItem.stock_quantity);
             let newStock = parseInt(currentStock) + parseInt(answer.quantity);
             con.query("UPDATE products SET stock_quantity =" + newStock + " WHERE item_id = " + chosenItem.item_id, (err, res) => {
@@ -177,6 +182,7 @@ function addInventory() {
     })
 }
 
+// function to add a new product to the database
 function addProduct() {
     inquirer.prompt([{
         name: "item",
@@ -207,7 +213,7 @@ function addProduct() {
             return false;
         }
     },
-]).then(newProduct => {
+]).then(newProduct => { // here is where the item gets added from the answers then inserted into the database
         con.query(
             "INSERT INTO products SET ?",
             {
