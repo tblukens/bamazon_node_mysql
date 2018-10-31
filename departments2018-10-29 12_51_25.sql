@@ -1,6 +1,6 @@
 use bamazon;
 
-create table deparments (
+create table departments (
 department_id int(11) not null auto_increment,
 department_name varchar(255) not null,
 over_head_costs dec(10,2) not null,
